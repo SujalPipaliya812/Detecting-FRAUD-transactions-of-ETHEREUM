@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethereum Fraud Detection</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --dark-bg: #1f2937;
+            --card-bg: #ffffff;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: none;
+            margin-bottom: 2rem;
+            background: var(--card-bg);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), #6366f1);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 1.5rem;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control {
+            border-radius: 8px;
+            border: 2px solid #e5e7eb;
+            padding: 0.75rem;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        .btn-predict {
+            background: linear-gradient(135deg, var(--primary-color), #6366f1);
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+        }
+        
+        .btn-predict:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.6);
+        }
+        
+        .result-card {
+            border-left: 5px solid var(--primary-color);
+            transition: all 0.3s;
+        }
+        
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+        }
+        
+        .model-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .prediction-badge {
+            font-size: 1.2rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 1rem 0;
+        }
+        
+        .badge-fraud {
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
+            color: white;
+        }
+        
+        .badge-legitimate {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+        }
+        
+        .probability-bar {
+            height: 30px;
+            border-radius: 15px;
+            background: #e5e7eb;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+        
+        .probability-fill {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transition: width 1s ease-in-out;
+        }
+        
+        .prob-fraud {
+            background: linear-gradient(90deg, var(--danger-color), #dc2626);
+        }
+        
+        .prob-legitimate {
+            background: linear-gradient(90deg, var(--success-color), #059669);
+        }
+        
+        .info-icon {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+        
+        .feature-icon {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animated {
+            animation: fadeIn 0.6s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="header animated">
+            <h1><i class="fas fa-shield-alt"></i> Ethereum Fraud Detection</h1>
+            <p>Advanced ML-powered fraud detection for Ethereum transactions</p>
+        </div>
+        
+        <!-- Input Form -->
+        <div class="card animated" style="animation-delay: 0.1s;">
+            <div class="card-header">
+                <i class="fas fa-edit"></i> Transaction Details
+            </div>
+            <div class="card-body p-4">
+                <form action="/predict" method="post">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">
+                                <i class="fas fa-exchange-alt feature-icon"></i>Transaction Count
+                            </label>
+                            <input type="number" name="TxnCount" class="form-control" step="1" required placeholder="e.g., 150">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">
+                                <i class="fas fa-wallet feature-icon"></i>Balance (ETH)
+                            </label>
+                            <input type="number" name="Balance" class="form-control" step="any" required placeholder="e.g., 1.5">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">
+                                <i class="fas fa-gas-pump feature-icon"></i>Average Gas Used
+                            </label>
+                            <input type="number" name="AvgGasUsed" class="form-control" step="any" required placeholder="e.g., 21000">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">
+                                <i class="fas fa-coins feature-icon"></i>Token Transfers
+                            </label>
+                            <input type="number" name="TokenTransfers" class="form-control" step="1" required placeholder="e.g., 10">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">
+                                <i class="fas fa-arrow-down feature-icon"></i>Total ETH Received
+                            </label>
+                            <input type="number" name="TotalEthReceived" class="form-control" step="any" required placeholder="e.g., 5.2">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">
+                                <i class="fas fa-arrow-up feature-icon"></i>Total ETH Sent
+                            </label>
+                            <input type="number" name="TotalEthSent" class="form-control" step="any" required placeholder="e.g., 3.8">
+                        </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary btn-predict">
+                            <i class="fas fa-search"></i> Analyze Transaction
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Results Section -->
+        {% if results %}
+        <div class="card animated" style="animation-delay: 0.2s;">
+            <div class="card-header">
+                <i class="fas fa-chart-bar"></i> Prediction Results
+            </div>
+            <div class="card-body p-4">
+                <div class="row">
+                    {% for model_name, result in results.items() %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card result-card h-100">
+                            <div class="card-body">
+                                <div class="model-name">
+                                    <i class="fas fa-robot"></i> {{ model_name }}
+                                </div>
+                                
+                                {% if result.error %}
+                                <div class="alert alert-danger">
+                                    <i class="fas fa-exclamation-triangle"></i> Error: {{ result.error }}
+                                </div>
+                                {% else %}
+                                    {% set prediction = result.predictions[0] %}
+                                    {% if prediction == 1 %}
+                                    <div class="prediction-badge badge-fraud">
+                                        <i class="fas fa-exclamation-circle"></i> FRAUD DETECTED
+                                    </div>
+                                    {% else %}
+                                    <div class="prediction-badge badge-legitimate">
+                                        <i class="fas fa-check-circle"></i> LEGITIMATE
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if result.probabilities %}
+                                    <div class="mt-3">
+                                        <h6><i class="fas fa-percentage info-icon"></i>Confidence Levels:</h6>
+                                        
+                                        <small class="text-muted">Legitimate</small>
+                                        <div class="probability-bar">
+                                            <div class="probability-fill prob-legitimate" 
+                                                 style="width: {{ (result.probabilities[0][0] * 100)|round(1) }}%">
+                                                {{ (result.probabilities[0][0] * 100)|round(1) }}%
+                                            </div>
+                                        </div>
+                                        
+                                        <small class="text-muted">Fraudulent</small>
+                                        <div class="probability-bar">
+                                            <div class="probability-fill prob-fraud" 
+                                                 style="width: {{ (result.probabilities[0][1] * 100)|round(1) }}%">
+                                                {{ (result.probabilities[0][1] * 100)|round(1) }}%
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Model Performance Section -->
+        {% if perf_table %}
+        <div class="card animated" style="animation-delay: 0.3s;">
+            <div class="card-header">
+                <i class="fas fa-chart-line"></i> Model Performance Metrics
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    {{ perf_table | safe }}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Available Files Section -->
+        {% if files %}
+        <div class="card animated" style="animation-delay: 0.4s;">
+            <div class="card-header">
+                <i class="fas fa-file-alt"></i> Available Reports
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    {% for file in files %}
+                    <a href="/results/{{ file }}" class="list-group-item list-group-item-action" target="_blank">
+                        <i class="fas fa-download"></i> {{ file }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

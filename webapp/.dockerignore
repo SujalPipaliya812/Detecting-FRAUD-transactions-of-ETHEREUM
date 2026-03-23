@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+.env
+exports/*.pkl
+exports/*.csv
+exports/*.png
+exports/*.pdf
