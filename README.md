@@ -319,7 +319,7 @@ This project is for educational purposes.
 
 ## 👤 Author
 
-**Abhi Virani**
+**Sujal Pipaliya**
 - GitHub: [@SujalPipaliya812](https://github.com/SujalPipaliya812)
 
 ## 🙏 Acknowledgments
