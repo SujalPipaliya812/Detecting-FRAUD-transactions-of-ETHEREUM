@@ -320,7 +320,7 @@ This project is for educational purposes.
 ## 👤 Author
 
 **Abhi Virani**
-- GitHub: [@AbhiGuru25](https://github.com/AbhiGuru25)
+- GitHub: [@SujalPipaliya812](https://github.com/SujalPipaliya812)
 
 ## 🙏 Acknowledgments
 
@@ -335,7 +335,6 @@ This project is for educational purposes.
 
 For issues or questions:
 - Open an issue on GitHub
-- Email: abhivirani2556@gmail.com
 
 ---
 
